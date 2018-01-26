@@ -1,0 +1,26 @@
+﻿<Window x:Class="ScreenCastClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenCastClient"
+        mc:Ignorable="d"
+        Title="ScreenCastClient" Height="819.649" Width="420.611" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="image" MouseDown="image_MouseDown" MouseUp="image_MouseUp" MouseMove="image_MouseMove"/>
+
+        <Grid Grid.Row="1" Background="#FF008BFF">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="204*"/>
+                <ColumnDefinition Width="193*"/>
+            </Grid.ColumnDefinitions>
+            <Polygon Points="0,15 25,0 25,30" Fill="White" Margin="30,17,0,0" HorizontalAlignment="Left" Width="36" MouseDown="Polygon_MouseDown" MouseUp="Polygon_MouseUp" />
+            <Ellipse Fill="White" Margin="186,18,181,12" Width="30" HorizontalAlignment="Center" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" Grid.ColumnSpan="2"/>
+            <Rectangle Fill="White" Margin="0,17,30,10" HorizontalAlignment="Right" Width="30" MouseDown="Rectangle_MouseDown" MouseUp="Rectangle_MouseUp" Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</Window>

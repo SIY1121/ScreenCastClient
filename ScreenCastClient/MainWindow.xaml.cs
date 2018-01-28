@@ -94,7 +94,7 @@ namespace ScreenCastClient
                     imageHeight = int.Parse(res[1]);
                     bytePerframe = imageWidth * imageHeight * 3;
 
-                    if(imageWidth>imageHeight)//横向き画面の場合
+                    if (imageWidth > imageHeight)//横向き画面の場合
                     {
                         //タッチ座標の最大値と最小値を入れ替える
                         int tmp = displayWidth;
@@ -102,7 +102,8 @@ namespace ScreenCastClient
                         displayHeight = tmp;
                     }
 
-                    Dispatcher.Invoke(() => {//UIスレッドでBitmapを作成しないと、UIに反映できない
+                    Dispatcher.Invoke(() =>
+                    {//UIスレッドでBitmapを作成しないと、UIに反映できない
                         writeableBitmap = new WriteableBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Bgr24, null);
                         image.Source = writeableBitmap;
                     });
@@ -121,7 +122,7 @@ namespace ScreenCastClient
             {
                 int resSize = rawStream.Read(buf, 0, buf.Length);
 
-                if (ms.Length + resSize >= bytePerframe && bytePerframe > 0)//今回読んだデータで1フレーム分のデータに達したか、上回った場合
+                if (ms.Length + resSize >= bytePerframe)//今回読んだデータで1フレーム分のデータに達したか、上回った場合
                 {
                     int needSize = bytePerframe - (int)ms.Length;//1フレームに必要な残りのデータのサイズ
                     int remainSize = (int)ms.Length + resSize - bytePerframe;//余ったデータのサイズ
@@ -229,7 +230,7 @@ namespace ScreenCastClient
             streamToInputHost.Close();
             rawStream.Close();
         }
-        
+
         private void Polygon_MouseDown(object sender, MouseButtonEventArgs e)
         {
             byte[] sendByte = Encoding.UTF8.GetBytes($"key 0 4\n");
@@ -266,30 +267,27 @@ namespace ScreenCastClient
             streamToInputHost.Write(sendByte, 0, sendByte.Length);
         }
 
-        //コマンド実行して標準出力を返すだけの
-        //コピペメソッド
+        //コマンド実行して標準出力を返すだけ
         private string Exec(string str)
         {
-            //Processオブジェクトを作成
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
-            
-            p.StartInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
-            //出力を読み取れるようにする
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardInput = false;
-            //ウィンドウを表示しないようにする
-            p.StartInfo.CreateNoWindow = true;
-            //コマンドラインを指定（"/c"は実行後閉じるために必要）
-            p.StartInfo.Arguments = @"/c " + str;
-            
-            p.Start();
-            
-            string results = p.StandardOutput.ReadToEnd();
-            
-            p.WaitForExit();
-            p.Close();
-
+            Process process = new Process
+            {
+                StartInfo =
+                 {
+                    FileName =  "cmd",
+                    Arguments = @"/c " + str,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                 },
+                EnableRaisingEvents = true
+            };
+            process.Start();
+            string results = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            process.Close();
             return results;
         }
 
